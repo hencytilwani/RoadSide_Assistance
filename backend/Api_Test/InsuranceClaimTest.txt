@@ -1,0 +1,517 @@
+# INSURANCE CLAIM API DOCUMENTATION
+
+## Base URL: http://localhost:6009/api
+
+## Protected Routes (require authentication)
+
+### 1. Create Insurance Claim
+- **Endpoint:** POST http://localhost:6009/api/insurance-claims
+- **Description:** Create a new insurance claim
+- **Headers:** Authorization: Bearer {token}
+- **Request Body:**
+  ```json
+  {
+    "user_id": 1,
+    "vehicle_id": 5,
+    "insurance_company": "State Farm",
+    "policy_number": "SF-12345-AUTO",
+    "incident_date": "2023-04-01T14:30:00.000Z",
+    "description": "Minor collision with another vehicle at intersection",
+    "damage_assessment": {
+      "front_bumper": "scratched",
+      "headlight_right": "broken",
+      "hood": "dented"
+    },
+    "claim_amount": 2500,
+    "supporting_documents": [
+      {
+        "name": "accident_photo_1.jpg",
+        "url": "https://storage.example.com/documents/accident_photo_1.jpg",
+        "type": "image/jpeg"
+      },
+      {
+        "name": "police_report.pdf",
+        "url": "https://storage.example.com/documents/police_report.pdf",
+        "type": "application/pdf"
+      }
+    ]
+  }
+  ```
+- **Response (201 Created):**
+  ```json
+  {
+    "message": "Insurance claim created successfully",
+    "claim": {
+      "claim_id": 1,
+      "user_id": 1,
+      "vehicle_id": 5,
+      "insurance_company": "State Farm",
+      "policy_number": "SF-12345-AUTO",
+      "incident_date": "2023-04-01T14:30:00.000Z",
+      "description": "Minor collision with another vehicle at intersection",
+      "damage_assessment": {
+        "front_bumper": "scratched",
+        "headlight_right": "broken",
+        "hood": "dented"
+      },
+      "claim_amount": 2500,
+      "supporting_documents": [
+        {
+          "name": "accident_photo_1.jpg",
+          "url": "https://storage.example.com/documents/accident_photo_1.jpg",
+          "type": "image/jpeg"
+        },
+        {
+          "name": "police_report.pdf",
+          "url": "https://storage.example.com/documents/police_report.pdf",
+          "type": "application/pdf"
+        }
+      ],
+      "status": "draft",
+      "ai_assessment_result": {},
+      "created_at": "2023-04-05T10:30:00.000Z",
+      "updated_at": "2023-04-05T10:30:00.000Z"
+    }
+  }
+  ```
+- **Error Responses:**
+  - 400: Missing required fields
+  - 404: User not found / Vehicle not found or does not belong to this user
+  - 500: Server error during claim creation
+
+### 2. Get User Claims
+- **Endpoint:** GET http://localhost:6009/api/insurance-claims/user/:userId
+- **Description:** Get all insurance claims for a specific user
+- **Headers:** Authorization: Bearer {token}
+- **Parameters:** userId - ID of the user whose claims to retrieve
+- **Response (200 OK):**
+  ```json
+  {
+    "claims": [
+      {
+        "claim_id": 1,
+        "user_id": 1,
+        "vehicle_id": 5,
+        "insurance_company": "State Farm",
+        "policy_number": "SF-12345-AUTO",
+        "incident_date": "2023-04-01T14:30:00.000Z",
+        "description": "Minor collision with another vehicle at intersection",
+        "damage_assessment": {
+          "front_bumper": "scratched",
+          "headlight_right": "broken",
+          "hood": "dented"
+        },
+        "claim_amount": 2500,
+        "supporting_documents": [...],
+        "status": "submitted",
+        "ai_assessment_result": {...},
+        "created_at": "2023-04-05T10:30:00.000Z",
+        "updated_at": "2023-04-05T11:30:00.000Z",
+        "Vehicle": {
+          "make": "Toyota",
+          "model": "Corolla",
+          "year": 2020,
+          "license_plate": "ABC123"
+        }
+      },
+      {
+        "claim_id": 2,
+        "user_id": 1,
+        "vehicle_id": 5,
+        "insurance_company": "State Farm",
+        "policy_number": "SF-12345-AUTO",
+        "incident_date": "2023-03-15T09:15:00.000Z",
+        "description": "Hail damage to vehicle roof and hood",
+        "damage_assessment": {
+          "roof": "dented",
+          "hood": "dented",
+          "windshield": "chipped"
+        },
+        "claim_amount": 1800,
+        "supporting_documents": [...],
+        "status": "approved",
+        "ai_assessment_result": {...},
+        "approved_amount": 1500,
+        "created_at": "2023-03-16T10:00:00.000Z",
+        "updated_at": "2023-03-20T14:30:00.000Z",
+        "Vehicle": {
+          "make": "Toyota",
+          "model": "Corolla",
+          "year": 2020,
+          "license_plate": "ABC123"
+        }
+      }
+    ]
+  }
+  ```
+- **Error Responses:**
+  - 500: Server error while fetching claims
+
+### 3. Get Claim By ID
+- **Endpoint:** GET http://localhost:6009/api/insurance-claims/:claimId
+- **Description:** Get details of a specific insurance claim
+- **Headers:** Authorization: Bearer {token}
+- **Parameters:** claimId - ID of the insurance claim to retrieve
+- **Response (200 OK):**
+  ```json
+  {
+    "claim": {
+      "claim_id": 1,
+      "user_id": 1,
+      "vehicle_id": 5,
+      "insurance_company": "State Farm",
+      "policy_number": "SF-12345-AUTO",
+      "incident_date": "2023-04-01T14:30:00.000Z",
+      "description": "Minor collision with another vehicle at intersection",
+      "damage_assessment": {
+        "front_bumper": "scratched",
+        "headlight_right": "broken",
+        "hood": "dented"
+      },
+      "claim_amount": 2500,
+      "supporting_documents": [
+        {
+          "name": "accident_photo_1.jpg",
+          "url": "https://storage.example.com/documents/accident_photo_1.jpg",
+          "type": "image/jpeg"
+        },
+        {
+          "name": "police_report.pdf",
+          "url": "https://storage.example.com/documents/police_report.pdf",
+          "type": "application/pdf"
+        }
+      ],
+      "status": "submitted",
+      "ai_assessment_result": {
+        "estimated_damage": 2300,
+        "damage_assessment": "moderate",
+        "repair_recommendation": "Parts replacement and paintwork needed"
+      },
+      "created_at": "2023-04-05T10:30:00.000Z",
+      "updated_at": "2023-04-05T11:30:00.000Z",
+      "Vehicle": {
+        "make": "Toyota",
+        "model": "Corolla",
+        "year": 2020,
+        "license_plate": "ABC123",
+        "color": "Blue",
+        "vin_number": "1HGCM82633A123456"
+      },
+      "User": {
+        "name": "John Doe",
+        "email": "john@example.com",
+        "phone_number": "1234567890"
+      }
+    }
+  }
+  ```
+- **Error Responses:**
+  - 404: Insurance claim not found
+  - 500: Server error while fetching claim details
+
+### 4. Update Claim
+- **Endpoint:** PUT http://localhost:6009/api/insurance-claims/:claimId
+- **Description:** Update an existing insurance claim
+- **Headers:** Authorization: Bearer {token}
+- **Parameters:** claimId - ID of the insurance claim to update
+- **Request Body:**
+  ```json
+  {
+    "insurance_company": "State Farm",
+    "policy_number": "SF-12345-AUTO-UPDATED",
+    "incident_date": "2023-04-01T14:30:00.000Z",
+    "description": "Minor collision with another vehicle at intersection, updated with additional details",
+    "damage_assessment": {
+      "front_bumper": "scratched",
+      "headlight_right": "broken",
+      "hood": "dented",
+      "radiator": "damaged"
+    },
+    "claim_amount": 3000,
+    "supporting_documents": [
+      {
+        "name": "accident_photo_1.jpg",
+        "url": "https://storage.example.com/documents/accident_photo_1.jpg",
+        "type": "image/jpeg"
+      },
+      {
+        "name": "police_report.pdf",
+        "url": "https://storage.example.com/documents/police_report.pdf",
+        "type": "application/pdf"
+      },
+      {
+        "name": "repair_estimate.pdf",
+        "url": "https://storage.example.com/documents/repair_estimate.pdf",
+        "type": "application/pdf"
+      }
+    ]
+  }
+  ```
+- **Response (200 OK):**
+  ```json
+  {
+    "message": "Insurance claim updated successfully",
+    "claim": {
+      "claim_id": 1,
+      "user_id": 1,
+      "vehicle_id": 5,
+      "insurance_company": "State Farm",
+      "policy_number": "SF-12345-AUTO-UPDATED",
+      "incident_date": "2023-04-01T14:30:00.000Z",
+      "description": "Minor collision with another vehicle at intersection, updated with additional details",
+      "damage_assessment": {
+        "front_bumper": "scratched",
+        "headlight_right": "broken",
+        "hood": "dented",
+        "radiator": "damaged"
+      },
+      "claim_amount": 3000,
+      "supporting_documents": [
+        {
+          "name": "accident_photo_1.jpg",
+          "url": "https://storage.example.com/documents/accident_photo_1.jpg",
+          "type": "image/jpeg"
+        },
+        {
+          "name": "police_report.pdf",
+          "url": "https://storage.example.com/documents/police_report.pdf",
+          "type": "application/pdf"
+        },
+        {
+          "name": "repair_estimate.pdf",
+          "url": "https://storage.example.com/documents/repair_estimate.pdf",
+          "type": "application/pdf"
+        }
+      ],
+      "status": "draft",
+      "ai_assessment_result": {},
+      "created_at": "2023-04-05T10:30:00.000Z",
+      "updated_at": "2023-04-05T12:15:00.000Z"
+    }
+  }
+  ```
+- **Error Responses:**
+  - 404: Insurance claim not found
+  - 400: Invalid status transition
+  - 500: Server error during claim update
+
+### 5. Submit Claim
+- **Endpoint:** POST http://localhost:6009/api/insurance-claims/:claimId/submit
+- **Description:** Submit an insurance claim (change status from draft to submitted)
+- **Headers:** Authorization: Bearer {token}
+- **Parameters:** claimId - ID of the insurance claim to submit
+- **Response (200 OK):**
+  ```json
+  {
+    "message": "Insurance claim submitted successfully",
+    "claim": {
+      "claim_id": 1,
+      "user_id": 1,
+      "vehicle_id": 5,
+      "insurance_company": "State Farm",
+      "policy_number": "SF-12345-AUTO-UPDATED",
+      "incident_date": "2023-04-01T14:30:00.000Z",
+      "description": "Minor collision with another vehicle at intersection, updated with additional details",
+      "damage_assessment": {
+        "front_bumper": "scratched",
+        "headlight_right": "broken",
+        "hood": "dented",
+        "radiator": "damaged"
+      },
+      "claim_amount": 3000,
+      "supporting_documents": [...],
+      "status": "submitted",
+      "ai_assessment_result": {},
+      "created_at": "2023-04-05T10:30:00.000Z",
+      "updated_at": "2023-04-05T13:00:00.000Z"
+    }
+  }
+  ```
+- **Error Responses:**
+  - 404: Insurance claim not found
+  - 400: Only draft claims can be submitted / Missing required information for claim submission
+  - 500: Server error during claim submission
+
+### 6. Process AI Assessment
+- **Endpoint:** POST http://localhost:6009/api/insurance-claims/:claimId/ai-assessment
+- **Description:** Process AI assessment for an insurance claim
+- **Headers:** Authorization: Bearer {token}
+- **Parameters:** claimId - ID of the insurance claim to assess
+- **Request Body:**
+  ```json
+  {
+    "ai_assessment_result": {
+      "estimated_damage": 2800,
+      "damage_assessment": "moderate",
+      "repair_recommendation": "Parts replacement and paintwork needed",
+      "fraud_probability": "low",
+      "estimated_repair_time": "3 days",
+      "parts_needed": [
+        "front bumper", 
+        "right headlight assembly",
+        "hood"
+      ]
+    }
+  }
+  ```
+- **Response (200 OK):**
+  ```json
+  {
+    "message": "AI assessment processed successfully",
+    "claim": {
+      "claim_id": 1,
+      "user_id": 1,
+      "vehicle_id": 5,
+      "insurance_company": "State Farm",
+      "policy_number": "SF-12345-AUTO-UPDATED",
+      "incident_date": "2023-04-01T14:30:00.000Z",
+      "description": "Minor collision with another vehicle at intersection, updated with additional details",
+      "damage_assessment": {...},
+      "claim_amount": 3000,
+      "supporting_documents": [...],
+      "status": "submitted",
+      "ai_assessment_result": {
+        "estimated_damage": 2800,
+        "damage_assessment": "moderate",
+        "repair_recommendation": "Parts replacement and paintwork needed",
+        "fraud_probability": "low",
+        "estimated_repair_time": "3 days",
+        "parts_needed": [
+          "front bumper", 
+          "right headlight assembly",
+          "hood"
+        ]
+      },
+      "created_at": "2023-04-05T10:30:00.000Z",
+      "updated_at": "2023-04-05T14:00:00.000Z"
+    }
+  }
+  ```
+- **Error Responses:**
+  - 404: Insurance claim not found
+  - 400: AI assessment result is required
+  - 500: Server error during AI assessment processing
+
+### 7. Update Claim Status
+- **Endpoint:** PATCH http://localhost:6009/api/insurance-claims/:claimId/status
+- **Description:** Approve or reject an insurance claim
+- **Headers:** Authorization: Bearer {token}
+- **Parameters:** claimId - ID of the insurance claim to update status
+- **Request Body (Approve):**
+  ```json
+  {
+    "status": "approved",
+    "approved_amount": 2500
+  }
+  ```
+- **Request Body (Reject):**
+  ```json
+  {
+    "status": "rejected",
+    "rejection_reason": "Policy does not cover this type of damage"
+  }
+  ```
+- **Response (200 OK - Approve):**
+  ```json
+  {
+    "message": "Insurance claim approved successfully",
+    "claim": {
+      "claim_id": 1,
+      "user_id": 1,
+      "vehicle_id": 5,
+      "insurance_company": "State Farm",
+      "policy_number": "SF-12345-AUTO-UPDATED",
+      "incident_date": "2023-04-01T14:30:00.000Z",
+      "description": "Minor collision with another vehicle at intersection, updated with additional details",
+      "damage_assessment": {...},
+      "claim_amount": 3000,
+      "approved_amount": 2500,
+      "supporting_documents": [...],
+      "status": "approved",
+      "ai_assessment_result": {...},
+      "created_at": "2023-04-05T10:30:00.000Z",
+      "updated_at": "2023-04-06T09:30:00.000Z"
+    }
+  }
+  ```
+- **Response (200 OK - Reject):**
+  ```json
+  {
+    "message": "Insurance claim rejected successfully",
+    "claim": {
+      "claim_id": 1,
+      "user_id": 1,
+      "vehicle_id": 5,
+      "insurance_company": "State Farm",
+      "policy_number": "SF-12345-AUTO-UPDATED",
+      "incident_date": "2023-04-01T14:30:00.000Z",
+      "description": "Minor collision with another vehicle at intersection, updated with additional details",
+      "damage_assessment": {...},
+      "claim_amount": 3000,
+      "supporting_documents": [...],
+      "status": "rejected",
+      "ai_assessment_result": {...},
+      "created_at": "2023-04-05T10:30:00.000Z",
+      "updated_at": "2023-04-06T09:30:00.000Z"
+    }
+  }
+  ```
+- **Error Responses:**
+  - 404: Insurance claim not found
+  - 400: Valid status (approved/rejected) is required / Only claims in processing status can be approved or rejected
+  - 500: Server error during status update
+
+### 8. Delete Claim
+- **Endpoint:** DELETE http://localhost:6009/api/insurance-claims/:claimId
+- **Description:** Delete a draft insurance claim
+- **Headers:** Authorization: Bearer {token}
+- **Parameters:** claimId - ID of the insurance claim to delete
+- **Response (200 OK):**
+  ```json
+  {
+    "message": "Insurance claim deleted successfully"
+  }
+  ```
+- **Error Responses:**
+  - 404: Insurance claim not found
+  - 400: Only draft claims can be deleted
+  - 500: Server error during claim deletion
+
+### 9. Get Claims Statistics
+- **Endpoint:** GET http://localhost:6009/api/insurance-claims/statistics/summary
+- **Description:** Get statistics for all insurance claims
+- **Headers:** Authorization: Bearer {token}
+- **Response (200 OK):**
+  ```json
+  {
+    "totalClaims": 25,
+    "draftClaims": 8,
+    "submittedClaims": 5,
+    "processingClaims": 3,
+    "approvedClaims": 7,
+    "rejectedClaims": 2,
+    "approvedAmounts": 15200
+  }
+  ```
+- **Error Responses:**
+  - 500: Server error while fetching statistics
+
+## API Routes Reference
+
+### Base Endpoint
+All API routes are prefixed with `/insurance-claims` as defined in the main router:
+
+```javascript
+router.use('/insurance-claims', InsuranceClaimRouter);
+```
+
+### Route Summary
+- `POST http://localhost:6009/api/insurance-claims`: Create a new insurance claim
+- `GET http://localhost:6009/api/insurance-claims/user/:userId`: Get all claims for a specific user
+- `GET http://localhost:6009/api/insurance-claims/:claimId`: Get a specific claim by ID
+- `PUT http://localhost:6009/api/insurance-claims/:claimId`: Update an insurance claim
+- `POST http://localhost:6009/api/insurance-claims/:claimId/submit`: Submit a claim
+- `POST http://localhost:6009/api/insurance-claims/:claimId/ai-assessment`: Process AI assessment for a claim
+- `PATCH http://localhost:6009/api/insurance-claims/:claimId/status`: Approve or reject a claim
+- `DELETE http://localhost:6009/api/insurance-claims/:claimId`: Delete a claim
+- `GET http://localhost:6009/api/insurance-claims/statistics/summary`: Get claims statistics 

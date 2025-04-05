@@ -1,0 +1,394 @@
+# AR REPAIR GUIDES API DOCUMENTATION
+
+## Public Routes
+
+### 1. Get All Repair Guides
+- **Endpoint:** GET /ARRepairGuides
+- **Description:** Retrieve all AR repair guides
+- **Response (200 OK):**
+  ```json
+  [
+    {
+      "guide_id": 1,
+      "title": "How to Change Oil",
+      "vehicle_make": "Toyota",
+      "vehicle_model": "Corolla",
+      "year_range": "{\"min\":2010,\"max\":2022}",
+      "repair_type": "Maintenance",
+      "difficulty_level": "Beginner",
+      "estimated_time": "30 minutes",
+      "steps": [
+        {"step_number": 1, "description": "Locate the oil drain plug", "image_url": "url/to/image1.jpg"},
+        {"step_number": 2, "description": "Place oil pan under the drain plug", "image_url": "url/to/image2.jpg"}
+      ],
+      "required_tools": ["Wrench", "Oil pan", "New oil filter"],
+      "safety_warnings": ["Ensure engine is cool before starting", "Dispose of used oil properly"],
+      "created_at": "2023-01-01T00:00:00.000Z",
+      "updated_at": "2023-01-01T00:00:00.000Z"
+    },
+    {
+      "guide_id": 2,
+      "title": "Replace Brake Pads",
+      "vehicle_make": "Honda",
+      "vehicle_model": "Civic",
+      "year_range": "{\"min\":2012,\"max\":2023}",
+      "repair_type": "Brakes",
+      "difficulty_level": "Intermediate",
+      "estimated_time": "1 hour",
+      "steps": [
+        {"step_number": 1, "description": "Jack up the vehicle", "image_url": "url/to/image1.jpg"},
+        {"step_number": 2, "description": "Remove the wheel", "image_url": "url/to/image2.jpg"}
+      ],
+      "required_tools": ["Jack", "Lug wrench", "C-clamp"],
+      "safety_warnings": ["Use jack stands for safety", "Do not drive with worn brake pads"],
+      "created_at": "2023-01-02T00:00:00.000Z",
+      "updated_at": "2023-01-02T00:00:00.000Z"
+    }
+  ]
+  ```
+- **Error Responses:**
+  - 500: Server error while fetching repair guides
+
+### 2. Get Repair Guide By ID
+- **Endpoint:** GET /ARRepairGuides/:guideId
+- **Description:** Retrieve a specific repair guide by ID
+- **Parameters:** guideId - ID of the repair guide to retrieve
+- **Response (200 OK):**
+  ```json
+  {
+    "guide_id": 1,
+    "title": "How to Change Oil",
+    "vehicle_make": "Toyota",
+    "vehicle_model": "Corolla",
+    "year_range": "{\"min\":2010,\"max\":2022}",
+    "repair_type": "Maintenance",
+    "difficulty_level": "Beginner",
+    "estimated_time": "30 minutes",
+    "steps": [
+      {"step_number": 1, "description": "Locate the oil drain plug", "image_url": "url/to/image1.jpg"},
+      {"step_number": 2, "description": "Place oil pan under the drain plug", "image_url": "url/to/image2.jpg"}
+    ],
+    "required_tools": ["Wrench", "Oil pan", "New oil filter"],
+    "safety_warnings": ["Ensure engine is cool before starting", "Dispose of used oil properly"],
+    "created_at": "2023-01-01T00:00:00.000Z",
+    "updated_at": "2023-01-01T00:00:00.000Z"
+  }
+  ```
+- **Error Responses:**
+  - 404: Repair guide not found
+  - 500: Server error while fetching repair guide
+
+### 3. Search Repair Guides
+- **Endpoint:** GET /ARRepairGuides/search
+- **Description:** Search for repair guides based on keywords and filters
+- **Query Parameters:**
+  - keyword (optional): Search term to match in title or repair type
+  - repair_type (optional): Filter by repair type
+  - difficulty_level (optional): Filter by difficulty level
+  - make (optional): Filter by vehicle make
+  - model (optional): Filter by vehicle model
+- **Example:** /ARRepairGuides/search?keyword=oil&repair_type=Maintenance&make=Toyota
+- **Response (200 OK):**
+  ```json
+  [
+    {
+      "guide_id": 1,
+      "title": "How to Change Oil",
+      "vehicle_make": "Toyota",
+      "vehicle_model": "Corolla",
+      "year_range": "{\"min\":2010,\"max\":2022}",
+      "repair_type": "Maintenance",
+      "difficulty_level": "Beginner",
+      "estimated_time": "30 minutes",
+      "steps": [...],
+      "required_tools": ["Wrench", "Oil pan", "New oil filter"],
+      "safety_warnings": ["Ensure engine is cool before starting", "Dispose of used oil properly"],
+      "created_at": "2023-01-01T00:00:00.000Z",
+      "updated_at": "2023-01-01T00:00:00.000Z"
+    }
+  ]
+  ```
+- **Error Responses:**
+  - 500: Server error while searching repair guides
+
+### 4. Get Guides By Repair Type
+- **Endpoint:** GET /ARRepairGuides/type/:repairType
+- **Description:** Get all repair guides for a specific repair type
+- **Parameters:** repairType - Type of repair (e.g., "Maintenance", "Brakes", "Engine")
+- **Response (200 OK):**
+  ```json
+  [
+    {
+      "guide_id": 1,
+      "title": "How to Change Oil",
+      "vehicle_make": "Toyota",
+      "vehicle_model": "Corolla",
+      "year_range": "{\"min\":2010,\"max\":2022}",
+      "repair_type": "Maintenance",
+      "difficulty_level": "Beginner",
+      "estimated_time": "30 minutes",
+      "steps": [...],
+      "required_tools": ["Wrench", "Oil pan", "New oil filter"],
+      "safety_warnings": ["Ensure engine is cool before starting", "Dispose of used oil properly"],
+      "created_at": "2023-01-01T00:00:00.000Z",
+      "updated_at": "2023-01-01T00:00:00.000Z"
+    },
+    {
+      "guide_id": 3,
+      "title": "Replace Air Filter",
+      "vehicle_make": "Ford",
+      "vehicle_model": "Focus",
+      "year_range": "{\"min\":2015,\"max\":2023}",
+      "repair_type": "Maintenance",
+      "difficulty_level": "Beginner",
+      "estimated_time": "15 minutes",
+      "steps": [...],
+      "required_tools": ["Screwdriver"],
+      "safety_warnings": [],
+      "created_at": "2023-01-03T00:00:00.000Z",
+      "updated_at": "2023-01-03T00:00:00.000Z"
+    }
+  ]
+  ```
+- **Error Responses:**
+  - 500: Server error while fetching guides by repair type
+
+### 5. Get Guides By Difficulty Level
+- **Endpoint:** GET /ARRepairGuides/difficulty/:difficultyLevel
+- **Description:** Get all repair guides for a specific difficulty level
+- **Parameters:** difficultyLevel - Level of difficulty (e.g., "Beginner", "Intermediate", "Advanced")
+- **Response (200 OK):**
+  ```json
+  [
+    {
+      "guide_id": 1,
+      "title": "How to Change Oil",
+      "vehicle_make": "Toyota",
+      "vehicle_model": "Corolla",
+      "year_range": "{\"min\":2010,\"max\":2022}",
+      "repair_type": "Maintenance",
+      "difficulty_level": "Beginner",
+      "estimated_time": "30 minutes",
+      "steps": [...],
+      "required_tools": ["Wrench", "Oil pan", "New oil filter"],
+      "safety_warnings": ["Ensure engine is cool before starting", "Dispose of used oil properly"],
+      "created_at": "2023-01-01T00:00:00.000Z",
+      "updated_at": "2023-01-01T00:00:00.000Z"
+    },
+    {
+      "guide_id": 3,
+      "title": "Replace Air Filter",
+      "vehicle_make": "Ford",
+      "vehicle_model": "Focus",
+      "year_range": "{\"min\":2015,\"max\":2023}",
+      "repair_type": "Maintenance",
+      "difficulty_level": "Beginner",
+      "estimated_time": "15 minutes",
+      "steps": [...],
+      "required_tools": ["Screwdriver"],
+      "safety_warnings": [],
+      "created_at": "2023-01-03T00:00:00.000Z",
+      "updated_at": "2023-01-03T00:00:00.000Z"
+    }
+  ]
+  ```
+- **Error Responses:**
+  - 500: Server error while fetching guides by difficulty level
+
+## Protected Routes (require authentication)
+
+### 6. Get Compatible Guides For Vehicle
+- **Endpoint:** GET /ARRepairGuides/compatible/:vehicleId
+- **Description:** Get all repair guides compatible with a specific vehicle
+- **Headers:** Authorization: Bearer {token}
+- **Parameters:** vehicleId - ID of the vehicle to find compatible guides for
+- **Response (200 OK):**
+  ```json
+  [
+    {
+      "guide_id": 1,
+      "title": "How to Change Oil",
+      "vehicle_make": "Toyota",
+      "vehicle_model": "Corolla",
+      "year_range": "{\"min\":2010,\"max\":2022}",
+      "repair_type": "Maintenance",
+      "difficulty_level": "Beginner",
+      "estimated_time": "30 minutes",
+      "steps": [...],
+      "required_tools": ["Wrench", "Oil pan", "New oil filter"],
+      "safety_warnings": ["Ensure engine is cool before starting", "Dispose of used oil properly"],
+      "created_at": "2023-01-01T00:00:00.000Z",
+      "updated_at": "2023-01-01T00:00:00.000Z"
+    }
+  ]
+  ```
+- **Error Responses:**
+  - 404: Vehicle not found
+  - 500: Server error while finding compatible repair guides
+
+### 7. Create Repair Guide
+- **Endpoint:** POST /ARRepairGuides
+- **Description:** Create a new repair guide
+- **Headers:** Authorization: Bearer {token}
+- **Request Body:**
+  ```json
+  {
+    "title": "Replacing Spark Plugs",
+    "vehicle_make": "Chevrolet",
+    "vehicle_model": "Silverado",
+    "year_range": {
+      "min": 2015,
+      "max": 2023
+    },
+    "repair_type": "Engine",
+    "difficulty_level": "Intermediate",
+    "estimated_time": "1 hour",
+    "steps": [
+      {
+        "step_number": 1,
+        "description": "Locate spark plug wires",
+        "image_url": "url/to/image1.jpg"
+      },
+      {
+        "step_number": 2,
+        "description": "Remove spark plug wire from first plug",
+        "image_url": "url/to/image2.jpg"
+      }
+    ],
+    "required_tools": ["Socket wrench", "Spark plug socket", "Extension bar"],
+    "safety_warnings": ["Ensure engine is cool", "Disconnect battery before starting"]
+  }
+  ```
+- **Response (201 Created):**
+  ```json
+  {
+    "guide_id": 4,
+    "title": "Replacing Spark Plugs",
+    "vehicle_make": "Chevrolet",
+    "vehicle_model": "Silverado",
+    "year_range": "{\"min\":2015,\"max\":2023}",
+    "repair_type": "Engine",
+    "difficulty_level": "Intermediate",
+    "estimated_time": "1 hour",
+    "steps": [
+      {
+        "step_number": 1,
+        "description": "Locate spark plug wires",
+        "image_url": "url/to/image1.jpg"
+      },
+      {
+        "step_number": 2,
+        "description": "Remove spark plug wire from first plug",
+        "image_url": "url/to/image2.jpg"
+      }
+    ],
+    "required_tools": ["Socket wrench", "Spark plug socket", "Extension bar"],
+    "safety_warnings": ["Ensure engine is cool", "Disconnect battery before starting"],
+    "created_at": "2023-01-04T00:00:00.000Z",
+    "updated_at": "2023-01-04T00:00:00.000Z"
+  }
+  ```
+- **Error Responses:**
+  - 500: Server error while creating repair guide
+
+### 8. Update Repair Guide
+- **Endpoint:** PUT /ARRepairGuides/:guideId
+- **Description:** Update an existing repair guide
+- **Headers:** Authorization: Bearer {token}
+- **Parameters:** guideId - ID of the repair guide to update
+- **Request Body:**
+  ```json
+  {
+    "title": "Replacing Spark Plugs - Updated",
+    "vehicle_make": "Chevrolet",
+    "vehicle_model": "Silverado",
+    "year_range": {
+      "min": 2015,
+      "max": 2024
+    },
+    "repair_type": "Engine",
+    "difficulty_level": "Intermediate",
+    "estimated_time": "45 minutes",
+    "steps": [
+      {
+        "step_number": 1,
+        "description": "Locate spark plug wires",
+        "image_url": "url/to/new_image1.jpg"
+      },
+      {
+        "step_number": 2,
+        "description": "Remove spark plug wire from first plug",
+        "image_url": "url/to/new_image2.jpg"
+      }
+    ],
+    "required_tools": ["Socket wrench", "Spark plug socket", "Extension bar", "Anti-seize lubricant"],
+    "safety_warnings": ["Ensure engine is cool", "Disconnect battery before starting", "Do not overtighten new plugs"]
+  }
+  ```
+- **Response (200 OK):**
+  ```json
+  {
+    "guide_id": 4,
+    "title": "Replacing Spark Plugs - Updated",
+    "vehicle_make": "Chevrolet",
+    "vehicle_model": "Silverado",
+    "year_range": "{\"min\":2015,\"max\":2024}",
+    "repair_type": "Engine",
+    "difficulty_level": "Intermediate",
+    "estimated_time": "45 minutes",
+    "steps": [
+      {
+        "step_number": 1,
+        "description": "Locate spark plug wires",
+        "image_url": "url/to/new_image1.jpg"
+      },
+      {
+        "step_number": 2,
+        "description": "Remove spark plug wire from first plug",
+        "image_url": "url/to/new_image2.jpg"
+      }
+    ],
+    "required_tools": ["Socket wrench", "Spark plug socket", "Extension bar", "Anti-seize lubricant"],
+    "safety_warnings": ["Ensure engine is cool", "Disconnect battery before starting", "Do not overtighten new plugs"],
+    "created_at": "2023-01-04T00:00:00.000Z",
+    "updated_at": "2023-01-05T00:00:00.000Z"
+  }
+  ```
+- **Error Responses:**
+  - 404: Repair guide not found
+  - 500: Server error while updating repair guide
+
+### 9. Delete Repair Guide
+- **Endpoint:** DELETE /ARRepairGuides/:guideId
+- **Description:** Delete a repair guide
+- **Headers:** Authorization: Bearer {token}
+- **Parameters:** guideId - ID of the repair guide to delete
+- **Response (200 OK):**
+  ```json
+  {
+    "message": "Repair guide deleted successfully"
+  }
+  ```
+- **Error Responses:**
+  - 404: Repair guide not found
+  - 500: Server error while deleting repair guide
+
+## API Routes Reference
+
+### Base Endpoint
+All API routes are prefixed with `/ARRepairGuides` as defined in the main router:
+
+```javascript
+router.use('/ARRepairGuides', ARRepairGuidesrouter);
+```
+
+### Route Summary
+- `GET /ARRepairGuides`: Get all repair guides
+- `GET /ARRepairGuides/:guideId`: Get a specific repair guide
+- `GET /ARRepairGuides/search`: Search for repair guides with filters
+- `GET /ARRepairGuides/type/:repairType`: Get guides by repair type
+- `GET /ARRepairGuides/difficulty/:difficultyLevel`: Get guides by difficulty level
+- `GET /ARRepairGuides/compatible/:vehicleId`: Get guides compatible with a specific vehicle (requires auth)
+- `POST /ARRepairGuides`: Create a new repair guide (requires auth)
+- `PUT /ARRepairGuides/:guideId`: Update a repair guide (requires auth)
+- `DELETE /ARRepairGuides/:guideId`: Delete a repair guide (requires auth) 

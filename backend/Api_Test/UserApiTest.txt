@@ -1,0 +1,401 @@
+# USER API DOCUMENTATION
+
+## Public Routes
+
+### 1. User Registration
+- **Endpoint:** POST /users/register
+- **Description:** Register a new user account
+- **Request Body:**
+  ```json
+  {
+    "name": "John Doe",
+    "email": "john@example.com",
+    "phone_number": "1234567890",
+    "password": "securepassword",
+    "address": "123 Main St, City, Country",
+    "date_of_birth": "1990-01-01",
+    "emergency_contacts": [
+      {
+        "name": "Jane Doe",
+        "phone_number": "9876543210",
+        "relationship": "Spouse",
+        "is_primary": true
+      }
+    ]
+  }
+  ```
+- **Response (201 Created):**
+  ```json
+  {
+    "user": {
+      "id": 1,
+      "name": "John Doe",
+      "email": "john@example.com",
+      "phone_number": "1234567890",
+      "account_status": "active"
+    },
+    "token": "jwt_token_here"
+  }
+  ```
+- **Error Responses:**
+  - 400: User with this email already exists
+  - 500: Server error during registration
+
+### 2. User Login
+- **Endpoint:** POST /users/login
+- **Description:** Authenticate user and get token
+- **Request Body:**
+  ```json
+  {
+    "email": "john@example.com",
+    "password": "securepassword"
+  }
+  ```
+- **Response (200 OK):**
+  ```json
+  {
+    "user": {
+      "id": 1,
+      "name": "John Doe",
+      "email": "john@example.com",
+      "phone_number": "1234567890",
+      "account_status": "active"
+    },
+    "token": "jwt_token_here"
+  }
+  ```
+- **Error Responses:**
+  - 404: User not found
+  - 401: Invalid credentials
+  - 403: Account inactive/suspended
+  - 500: Server error during login
+
+### 3. Forgot Password
+- **Endpoint:** POST /users/forgot-password
+- **Description:** Generate password reset token
+- **Request Body:**
+  ```json
+  {
+    "email": "john@example.com"
+  }
+  ```
+- **Response (200 OK):**
+  ```json
+  {
+    "message": "Password reset token generated successfully"
+  }
+  ```
+- **Error Responses:**
+  - 404: User not found
+  - 500: Server error in forgot password process
+
+### 4. Reset Password
+- **Endpoint:** POST /users/reset-password
+- **Description:** Reset password using token
+- **Request Body:**
+  ```json
+  {
+    "token": "reset_token_here",
+    "newPassword": "newSecurePassword"
+  }
+  ```
+- **Response (200 OK):**
+  ```json
+  {
+    "message": "Password reset successful"
+  }
+  ```
+- **Error Responses:**
+  - 400: Invalid or expired reset token
+  - 500: Server error in reset password process
+
+## Protected Routes (require authentication)
+
+### 5. Get User Profile
+- **Endpoint:** GET /users/profile
+- **Description:** Get current user profile details
+- **Headers:** Authorization: Bearer {token}
+- **Response (200 OK):**
+  ```json
+  {
+    "user": {
+      "user_id": 1,
+      "name": "John Doe",
+      "email": "john@example.com",
+      "phone_number": "1234567890",
+      "address": "123 Main St, City, Country",
+      "date_of_birth": "1990-01-01",
+      "account_status": "active",
+      "profile_image_url": "https://example.com/profile.jpg",
+      "created_at": "2023-01-01T00:00:00.000Z",
+      "updated_at": "2023-01-01T00:00:00.000Z",
+      "user_emergency_contacts": [
+        {
+          "contact_id": 1,
+          "user_id": 1,
+          "name": "Jane Doe",
+          "phone_number": "9876543210",
+          "relationship": "Spouse",
+          "is_primary": true
+        }
+      ],
+      "subscription": {
+        "subscription_id": 1,
+        "user_id": 1,
+        "plan_id": 1,
+        "start_date": "2023-01-01T00:00:00.000Z",
+        "end_date": "2024-01-01T00:00:00.000Z",
+        "status": "active",
+        "subscription_plans": {
+          "plan_id": 1,
+          "name": "Premium",
+          "description": "Premium roadside assistance plan",
+          "price": 99.99,
+          "duration_months": 12
+        }
+      }
+    }
+  }
+  ```
+- **Error Responses:**
+  - 404: User not found
+  - 500: Server error while fetching profile
+
+### 6. Update User Profile
+- **Endpoint:** PUT /users/profile
+- **Description:** Update user profile information
+- **Headers:** Authorization: Bearer {token}
+- **Request Body:**
+  ```json
+  {
+    "name": "John Smith",
+    "phone_number": "1234567890",
+    "address": "456 New St, City, Country",
+    "date_of_birth": "1990-01-01",
+    "profile_image_url": "https://example.com/new-profile.jpg"
+  }
+  ```
+- **Response (200 OK):**
+  ```json
+  {
+    "user": {
+      "id": 1,
+      "name": "John Smith",
+      "email": "john@example.com",
+      "phone_number": "1234567890",
+      "address": "456 New St, City, Country",
+      "date_of_birth": "1990-01-01",
+      "profile_image_url": "https://example.com/new-profile.jpg",
+      "account_status": "active"
+    }
+  }
+  ```
+- **Error Responses:**
+  - 404: User not found
+  - 500: Server error while updating profile
+
+### 7. Change Password
+- **Endpoint:** PUT /users/change-password
+- **Description:** Change user password
+- **Headers:** Authorization: Bearer {token}
+- **Request Body:**
+  ```json
+  {
+    "currentPassword": "securepassword",
+    "newPassword": "newSecurePassword"
+  }
+  ```
+- **Response (200 OK):**
+  ```json
+  {
+    "message": "Password updated successfully"
+  }
+  ```
+- **Error Responses:**
+  - 404: User not found
+  - 401: Current password is incorrect
+  - 500: Server error while changing password
+
+### 8. Delete Account
+- **Endpoint:** DELETE /users/account
+- **Description:** Delete user account
+- **Headers:** Authorization: Bearer {token}
+- **Request Body:**
+  ```json
+  {
+    "password": "securepassword"
+  }
+  ```
+- **Response (200 OK):**
+  ```json
+  {
+    "message": "Account deleted successfully"
+  }
+  ```
+- **Error Responses:**
+  - 404: User not found
+  - 401: Password is incorrect
+  - 500: Server error while deleting account
+
+## Emergency Contact Management
+
+### 9. Get All Emergency Contacts
+- **Endpoint:** GET /users/emergency-contacts
+- **Description:** Get all emergency contacts for current user
+- **Headers:** Authorization: Bearer {token}
+- **Response (200 OK):**
+  ```json
+  {
+    "contacts": [
+      {
+        "contact_id": 1,
+        "user_id": 1,
+        "name": "Jane Doe",
+        "phone_number": "9876543210",
+        "relationship": "Spouse",
+        "is_primary": true,
+        "created_at": "2023-01-01T00:00:00.000Z",
+        "updated_at": "2023-01-01T00:00:00.000Z"
+      }
+    ]
+  }
+  ```
+- **Error Responses:**
+  - 500: Server error while fetching emergency contacts
+
+### 10. Add Emergency Contact
+- **Endpoint:** POST /users/emergency-contacts
+- **Description:** Add new emergency contact
+- **Headers:** Authorization: Bearer {token}
+- **Request Body:**
+  ```json
+  {
+    "name": "James Smith",
+    "phone_number": "5551234567",
+    "relationship": "Brother",
+    "is_primary": false
+  }
+  ```
+- **Response (201 Created):**
+  ```json
+  {
+    "contact": {
+      "contact_id": 2,
+      "user_id": 1,
+      "name": "James Smith",
+      "phone_number": "5551234567",
+      "relationship": "Brother",
+      "is_primary": false,
+      "created_at": "2023-01-01T00:00:00.000Z",
+      "updated_at": "2023-01-01T00:00:00.000Z"
+    }
+  }
+  ```
+- **Error Responses:**
+  - 500: Server error while adding emergency contact
+
+### 11. Update Emergency Contact
+- **Endpoint:** PUT /users/emergency-contacts/:contactId
+- **Description:** Update existing emergency contact
+- **Headers:** Authorization: Bearer {token}
+- **Parameters:** contactId - ID of the contact to update
+- **Request Body:**
+  ```json
+  {
+    "name": "James Smith",
+    "phone_number": "5559876543",
+    "relationship": "Brother",
+    "is_primary": true
+  }
+  ```
+- **Response (200 OK):**
+  ```json
+  {
+    "contact": {
+      "contact_id": 2,
+      "user_id": 1,
+      "name": "James Smith",
+      "phone_number": "5559876543",
+      "relationship": "Brother",
+      "is_primary": true,
+      "created_at": "2023-01-01T00:00:00.000Z",
+      "updated_at": "2023-01-02T00:00:00.000Z"
+    }
+  }
+  ```
+- **Error Responses:**
+  - 404: Emergency contact not found
+  - 500: Server error while updating emergency contact
+
+### 12. Delete Emergency Contact
+- **Endpoint:** DELETE /users/emergency-contacts/:contactId
+- **Description:** Delete emergency contact
+- **Headers:** Authorization: Bearer {token}
+- **Parameters:** contactId - ID of the contact to delete
+- **Response (200 OK):**
+  ```json
+  {
+    "message": "Emergency contact deleted successfully"
+  }
+  ```
+- **Error Responses:**
+  - 404: Emergency contact not found
+  - 500: Server error while deleting emergency contact
+
+## Subscription Management
+
+### 13. Get User Subscription
+- **Endpoint:** GET /users/subscription
+- **Description:** Get current user's active subscription
+- **Headers:** Authorization: Bearer {token}
+- **Response (200 OK):**
+  ```json
+  {
+    "subscription": {
+      "subscription_id": 1,
+      "user_id": 1,
+      "plan_id": 1,
+      "start_date": "2023-01-01T00:00:00.000Z",
+      "end_date": "2024-01-01T00:00:00.000Z",
+      "status": "active",
+      "created_at": "2023-01-01T00:00:00.000Z",
+      "updated_at": "2023-01-01T00:00:00.000Z",
+      "plan": {
+        "plan_id": 1,
+        "name": "Premium",
+        "description": "Premium roadside assistance plan",
+        "price": 99.99,
+        "duration_months": 12,
+        "features": ["Unlimited towing", "24/7 assistance", "Tire changes"]
+      }
+    }
+  }
+  ```
+- **Error Responses:**
+  - 404: No active subscription found
+  - 500: Server error while fetching subscription
+
+## Admin Routes
+
+### 14. Update Account Status (Admin Only)
+- **Endpoint:** PUT /users/admin/users/:userId/status
+- **Description:** Update account status for a specific user
+- **Headers:** Authorization: Bearer {token} (with admin role)
+- **Parameters:** userId - ID of the user to update
+- **Request Body:**
+  ```json
+  {
+    "account_status": "suspended"
+  }
+  ```
+- **Response (200 OK):**
+  ```json
+  {
+    "message": "User account status updated to suspended"
+  }
+  ```
+- **Error Responses:**
+  - 403: Unauthorized: Admin access required
+  - 404: User not found
+  - 400: Invalid account status
+  - 500: Server error while updating account status 

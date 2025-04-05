@@ -1,0 +1,366 @@
+# MAINTENANCE API DOCUMENTATION
+
+## Base URL: http://localhost:6009/api
+
+## Protected Routes (require authentication)
+
+### 1. Get Vehicle Maintenance Records
+- **Endpoint:** GET http://localhost:6009/api/maintenance/vehicle/:vehicleId
+- **Description:** Get all maintenance records for a specific vehicle
+- **Headers:** Authorization: Bearer {token}
+- **Parameters:** vehicleId - ID of the vehicle whose maintenance records to retrieve
+- **Response (200 OK):**
+  ```json
+  {
+    "success": true,
+    "data": [
+      {
+        "record_id": 1,
+        "vehicle_id": 5,
+        "maintenance_type": "oil_change",
+        "description": "Regular oil change with synthetic oil",
+        "date_performed": "2023-03-15T10:00:00.000Z",
+        "mileage_at_service": 25000,
+        "service_provider": "Quick Lube Center",
+        "cost": 65.99,
+        "next_service_date": "2023-06-15T10:00:00.000Z",
+        "next_service_mileage": 30000,
+        "created_at": "2023-03-15T10:30:00.000Z",
+        "updated_at": "2023-03-15T10:30:00.000Z"
+      },
+      {
+        "record_id": 2,
+        "vehicle_id": 5,
+        "maintenance_type": "tire_rotation",
+        "description": "Tire rotation and balancing",
+        "date_performed": "2023-02-20T14:00:00.000Z",
+        "mileage_at_service": 24000,
+        "service_provider": "Discount Tire",
+        "cost": 45.00,
+        "next_service_date": "2023-08-20T14:00:00.000Z",
+        "next_service_mileage": 30000,
+        "created_at": "2023-02-20T15:00:00.000Z",
+        "updated_at": "2023-02-20T15:00:00.000Z"
+      }
+    ]
+  }
+  ```
+- **Error Responses:**
+  - 404: Vehicle not found or access denied
+  - 500: Error fetching maintenance records
+
+### 2. Get Specific Maintenance Record
+- **Endpoint:** GET http://localhost:6009/api/maintenance/record/:recordId
+- **Description:** Get details of a specific maintenance record
+- **Headers:** Authorization: Bearer {token}
+- **Parameters:** recordId - ID of the maintenance record to retrieve
+- **Response (200 OK):**
+  ```json
+  {
+    "success": true,
+    "data": {
+      "record_id": 1,
+      "vehicle_id": 5,
+      "maintenance_type": "oil_change",
+      "description": "Regular oil change with synthetic oil",
+      "date_performed": "2023-03-15T10:00:00.000Z",
+      "mileage_at_service": 25000,
+      "service_provider": "Quick Lube Center",
+      "cost": 65.99,
+      "next_service_date": "2023-06-15T10:00:00.000Z",
+      "next_service_mileage": 30000,
+      "created_at": "2023-03-15T10:30:00.000Z",
+      "updated_at": "2023-03-15T10:30:00.000Z",
+      "Vehicle": {
+        "vehicle_id": 5,
+        "make": "Toyota",
+        "model": "Corolla",
+        "year": 2020,
+        "license_plate": "ABC123"
+      }
+    }
+  }
+  ```
+- **Error Responses:**
+  - 404: Maintenance record not found or access denied
+  - 500: Error fetching maintenance record
+
+### 3. Create Maintenance Record
+- **Endpoint:** POST http://localhost:6009/api/maintenance
+- **Description:** Create a new maintenance record
+- **Headers:** Authorization: Bearer {token}
+- **Request Body:**
+  ```json
+  {
+    "vehicle_id": 5,
+    "maintenance_type": "brake_service",
+    "description": "Replaced front brake pads and rotors",
+    "date_performed": "2023-04-05T09:30:00.000Z",
+    "mileage_at_service": 26500,
+    "service_provider": "Midas Auto Service",
+    "cost": 320.50,
+    "next_service_date": "2024-04-05T09:30:00.000Z",
+    "next_service_mileage": 46500
+  }
+  ```
+- **Response (201 Created):**
+  ```json
+  {
+    "success": true,
+    "message": "Maintenance record created successfully",
+    "data": {
+      "record_id": 3,
+      "vehicle_id": 5,
+      "maintenance_type": "brake_service",
+      "description": "Replaced front brake pads and rotors",
+      "date_performed": "2023-04-05T09:30:00.000Z",
+      "mileage_at_service": 26500,
+      "service_provider": "Midas Auto Service",
+      "cost": 320.50,
+      "next_service_date": "2024-04-05T09:30:00.000Z",
+      "next_service_mileage": 46500,
+      "created_at": "2023-04-05T10:00:00.000Z",
+      "updated_at": "2023-04-05T10:00:00.000Z"
+    }
+  }
+  ```
+- **Error Responses:**
+  - 404: Vehicle not found or access denied
+  - 500: Error creating maintenance record
+
+### 4. Update Maintenance Record
+- **Endpoint:** PUT http://localhost:6009/api/maintenance/record/:recordId
+- **Description:** Update an existing maintenance record
+- **Headers:** Authorization: Bearer {token}
+- **Parameters:** recordId - ID of the maintenance record to update
+- **Request Body:**
+  ```json
+  {
+    "maintenance_type": "brake_service",
+    "description": "Replaced front brake pads, rotors, and calipers",
+    "date_performed": "2023-04-05T09:30:00.000Z",
+    "mileage_at_service": 26500,
+    "service_provider": "Midas Auto Service",
+    "cost": 450.75,
+    "next_service_date": "2024-04-05T09:30:00.000Z",
+    "next_service_mileage": 46500
+  }
+  ```
+- **Response (200 OK):**
+  ```json
+  {
+    "success": true,
+    "message": "Maintenance record updated successfully",
+    "data": {
+      "record_id": 3,
+      "vehicle_id": 5,
+      "maintenance_type": "brake_service",
+      "description": "Replaced front brake pads, rotors, and calipers",
+      "date_performed": "2023-04-05T09:30:00.000Z",
+      "mileage_at_service": 26500,
+      "service_provider": "Midas Auto Service",
+      "cost": 450.75,
+      "next_service_date": "2024-04-05T09:30:00.000Z",
+      "next_service_mileage": 46500,
+      "created_at": "2023-04-05T10:00:00.000Z",
+      "updated_at": "2023-04-05T10:15:00.000Z"
+    }
+  }
+  ```
+- **Error Responses:**
+  - 404: Maintenance record not found or access denied
+  - 500: Error updating maintenance record
+
+### 5. Delete Maintenance Record
+- **Endpoint:** DELETE http://localhost:6009/api/maintenance/record/:recordId
+- **Description:** Delete a maintenance record
+- **Headers:** Authorization: Bearer {token}
+- **Parameters:** recordId - ID of the maintenance record to delete
+- **Response (200 OK):**
+  ```json
+  {
+    "success": true,
+    "message": "Maintenance record deleted successfully"
+  }
+  ```
+- **Error Responses:**
+  - 404: Maintenance record not found or access denied
+  - 500: Error deleting maintenance record
+
+### 6. Get Upcoming Maintenance
+- **Endpoint:** GET http://localhost:6009/api/maintenance/upcoming/:userId
+- **Description:** Get upcoming maintenance based on date and mileage for all user vehicles
+- **Headers:** Authorization: Bearer {token}
+- **Parameters:** userId - ID of the user whose upcoming maintenance to retrieve
+- **Response (200 OK):**
+  ```json
+  {
+    "success": true,
+    "data": {
+      "upcomingScheduledMaintenance": [
+        {
+          "record_id": 1,
+          "vehicle_id": 5,
+          "maintenance_type": "oil_change",
+          "description": "Regular oil change with synthetic oil",
+          "date_performed": "2023-03-15T10:00:00.000Z",
+          "mileage_at_service": 25000,
+          "service_provider": "Quick Lube Center",
+          "cost": 65.99,
+          "next_service_date": "2023-06-15T10:00:00.000Z",
+          "next_service_mileage": 30000,
+          "created_at": "2023-03-15T10:30:00.000Z",
+          "updated_at": "2023-03-15T10:30:00.000Z",
+          "Vehicle": {
+            "make": "Toyota",
+            "model": "Corolla",
+            "year": 2020,
+            "license_plate": "ABC123"
+          }
+        },
+        {
+          "record_id": 4,
+          "vehicle_id": 6,
+          "maintenance_type": "air_filter",
+          "description": "Replaced cabin air filter",
+          "date_performed": "2023-02-10T11:30:00.000Z",
+          "mileage_at_service": 32000,
+          "service_provider": "DIY",
+          "cost": 25.50,
+          "next_service_date": "2023-05-10T11:30:00.000Z",
+          "next_service_mileage": 42000,
+          "created_at": "2023-02-10T12:00:00.000Z",
+          "updated_at": "2023-02-10T12:00:00.000Z",
+          "Vehicle": {
+            "make": "Honda",
+            "model": "Civic",
+            "year": 2019,
+            "license_plate": "XYZ789"
+          }
+        }
+      ],
+      "predictiveMaintenance": [
+        {
+          "alert_id": 1,
+          "vehicle_id": 5,
+          "predicted_failure_component": "battery",
+          "confidence_level": 0.89,
+          "predicted_failure_date": "2023-05-20T00:00:00.000Z",
+          "predicted_mileage_at_failure": 28500,
+          "severity": "medium",
+          "is_dismissed": false,
+          "created_at": "2023-04-01T08:00:00.000Z",
+          "updated_at": "2023-04-01T08:00:00.000Z",
+          "Vehicle": {
+            "make": "Toyota",
+            "model": "Corolla",
+            "year": 2020,
+            "license_plate": "ABC123"
+          }
+        },
+        {
+          "alert_id": 2,
+          "vehicle_id": 6,
+          "predicted_failure_component": "serpentine_belt",
+          "confidence_level": 0.76,
+          "predicted_failure_date": "2023-06-15T00:00:00.000Z",
+          "predicted_mileage_at_failure": 45000,
+          "severity": "low",
+          "is_dismissed": false,
+          "created_at": "2023-04-02T09:30:00.000Z",
+          "updated_at": "2023-04-02T09:30:00.000Z",
+          "Vehicle": {
+            "make": "Honda",
+            "model": "Civic",
+            "year": 2019,
+            "license_plate": "XYZ789"
+          }
+        }
+      ]
+    }
+  }
+  ```
+- **Error Responses:**
+  - 403: Unauthorized access to user data
+  - 404: No vehicles found for this user
+  - 500: Error fetching upcoming maintenance
+
+### 7. Get Maintenance History
+- **Endpoint:** GET http://localhost:6009/api/maintenance/history/:vehicleId
+- **Description:** Get maintenance history with filtering options
+- **Headers:** Authorization: Bearer {token}
+- **Parameters:** 
+  - vehicleId - ID of the vehicle whose maintenance history to retrieve
+  - startDate (optional) - Filter records from this date (format: YYYY-MM-DD)
+  - endDate (optional) - Filter records until this date (format: YYYY-MM-DD)
+  - maintenanceType (optional) - Filter by maintenance type
+- **Example:** http://localhost:6009/api/maintenance/history/5?startDate=2023-01-01&endDate=2023-03-31&maintenanceType=oil_change
+- **Response (200 OK):**
+  ```json
+  {
+    "success": true,
+    "data": {
+      "records": [
+        {
+          "record_id": 1,
+          "vehicle_id": 5,
+          "maintenance_type": "oil_change",
+          "description": "Regular oil change with synthetic oil",
+          "date_performed": "2023-03-15T10:00:00.000Z",
+          "mileage_at_service": 25000,
+          "service_provider": "Quick Lube Center",
+          "cost": 65.99,
+          "next_service_date": "2023-06-15T10:00:00.000Z",
+          "next_service_mileage": 30000,
+          "created_at": "2023-03-15T10:30:00.000Z",
+          "updated_at": "2023-03-15T10:30:00.000Z"
+        },
+        {
+          "record_id": 5,
+          "vehicle_id": 5,
+          "maintenance_type": "oil_change",
+          "description": "Regular oil change with synthetic oil",
+          "date_performed": "2023-01-10T09:00:00.000Z",
+          "mileage_at_service": 20000,
+          "service_provider": "Quick Lube Center",
+          "cost": 65.99,
+          "next_service_date": "2023-03-15T10:00:00.000Z",
+          "next_service_mileage": 25000,
+          "created_at": "2023-01-10T09:30:00.000Z",
+          "updated_at": "2023-01-10T09:30:00.000Z"
+        }
+      ],
+      "stats": {
+        "totalRecords": 2,
+        "totalCost": 131.98,
+        "maintenanceByType": {
+          "oil_change": {
+            "count": 2,
+            "totalCost": 131.98
+          }
+        }
+      }
+    }
+  }
+  ```
+- **Error Responses:**
+  - 404: Vehicle not found or access denied
+  - 500: Error fetching maintenance history
+
+## API Routes Reference
+
+### Base Endpoint
+All API routes are prefixed with `/maintenance` as defined in the main router:
+
+```javascript
+router.use('/maintenance', Maintenancerouter);
+```
+
+### Route Summary
+- `GET http://localhost:6009/api/maintenance/vehicle/:vehicleId`: Get all maintenance records for a vehicle
+- `GET http://localhost:6009/api/maintenance/record/:recordId`: Get a specific maintenance record
+- `POST http://localhost:6009/api/maintenance`: Create a new maintenance record
+- `PUT http://localhost:6009/api/maintenance/record/:recordId`: Update a maintenance record
+- `DELETE http://localhost:6009/api/maintenance/record/:recordId`: Delete a maintenance record
+- `GET http://localhost:6009/api/maintenance/upcoming/:userId`: Get upcoming maintenance for a user
+- `GET http://localhost:6009/api/maintenance/history/:vehicleId`: Get maintenance history with filtering options 

@@ -1,0 +1,524 @@
+# BREAKDOWN REQUEST API DOCUMENTATION
+
+## Protected Routes (require authentication)
+
+### 1. Create Breakdown Request
+- **Endpoint:** POST /BreadDownRequest/create
+- **Description:** Create a new breakdown request for roadside assistance
+- **Headers:** Authorization: Bearer {token}
+- **Request Body:**
+  ```json
+  {
+    "user_id": 1,
+    "vehicle_id": 5,
+    "request_type": "flat_tire",
+    "description": "Front left tire is flat due to nail puncture",
+    "location_latitude": "37.7749",
+    "location_longitude": "-122.4194",
+    "location_address": "123 Main St, San Francisco, CA 94105",
+    "is_emergency": false,
+    "ai_diagnosis_result": "Tire puncture detected in front left tire",
+    "self_repair_attempted": true
+  }
+  ```
+- **Response (201 Created):**
+  ```json
+  {
+    "message": "Breakdown request created successfully",
+    "request": {
+      "request_id": 1,
+      "user_id": 1,
+      "vehicle_id": 5,
+      "request_type": "flat_tire",
+      "description": "Front left tire is flat due to nail puncture",
+      "location_latitude": "37.7749",
+      "location_longitude": "-122.4194",
+      "location_address": "123 Main St, San Francisco, CA 94105",
+      "timestamp": "2023-04-05T12:30:00.000Z",
+      "status": "pending",
+      "is_emergency": false,
+      "ai_diagnosis_result": "Tire puncture detected in front left tire",
+      "self_repair_attempted": true,
+      "created_at": "2023-04-05T12:30:00.000Z",
+      "updated_at": "2023-04-05T12:30:00.000Z"
+    }
+  }
+  ```
+- **Error Responses:**
+  - 404: User not found / Vehicle not found
+  - 403: Vehicle does not belong to this user
+  - 500: Server error while creating breakdown request
+
+### 2. Get User's Breakdown Requests
+- **Endpoint:** GET /BreadDownRequest/user/:userId
+- **Description:** Get all breakdown requests for a specific user
+- **Headers:** Authorization: Bearer {token}
+- **Parameters:** userId - ID of the user whose requests to retrieve
+- **Response (200 OK):**
+  ```json
+  {
+    "breakdownRequests": [
+      {
+        "request_id": 1,
+        "user_id": 1,
+        "vehicle_id": 5,
+        "request_type": "flat_tire",
+        "description": "Front left tire is flat due to nail puncture",
+        "location_latitude": "37.7749",
+        "location_longitude": "-122.4194",
+        "location_address": "123 Main St, San Francisco, CA 94105",
+        "timestamp": "2023-04-05T12:30:00.000Z",
+        "status": "pending",
+        "is_emergency": false,
+        "ai_diagnosis_result": "Tire puncture detected in front left tire",
+        "self_repair_attempted": true,
+        "created_at": "2023-04-05T12:30:00.000Z",
+        "updated_at": "2023-04-05T12:30:00.000Z",
+        "Vehicle": {
+          "make": "Toyota",
+          "model": "Corolla",
+          "year": 2020,
+          "license_plate": "ABC123",
+          "color": "Blue"
+        },
+        "ServiceAssignment": {
+          "assignment_id": 3,
+          "status": "assigned",
+          "estimated_arrival_time": "2023-04-05T13:00:00.000Z",
+          "actual_arrival_time": null,
+          "ServiceProvider": {
+            "business_name": "Quick Roadside Assistance",
+            "provider_type": "towing",
+            "rating": 4.8
+          }
+        }
+      },
+      {
+        "request_id": 2,
+        "user_id": 1,
+        "vehicle_id": 5,
+        "request_type": "battery_jump",
+        "description": "Car won't start, battery is dead",
+        "location_latitude": "37.7739",
+        "location_longitude": "-122.4312",
+        "location_address": "456 Market St, San Francisco, CA 94105",
+        "timestamp": "2023-03-15T08:45:00.000Z",
+        "status": "completed",
+        "is_emergency": false,
+        "ai_diagnosis_result": "Battery voltage low",
+        "self_repair_attempted": false,
+        "created_at": "2023-03-15T08:45:00.000Z",
+        "updated_at": "2023-03-15T10:30:00.000Z",
+        "Vehicle": {
+          "make": "Toyota",
+          "model": "Corolla",
+          "year": 2020,
+          "license_plate": "ABC123",
+          "color": "Blue"
+        },
+        "ServiceAssignment": {
+          "assignment_id": 2,
+          "status": "completed",
+          "estimated_arrival_time": "2023-03-15T09:15:00.000Z",
+          "actual_arrival_time": "2023-03-15T09:10:00.000Z",
+          "ServiceProvider": {
+            "business_name": "Mobile Mechanics",
+            "provider_type": "mechanic",
+            "rating": 4.9
+          }
+        }
+      }
+    ]
+  }
+  ```
+- **Error Responses:**
+  - 500: Server error while fetching user breakdown requests
+
+### 3. Get Specific Breakdown Request
+- **Endpoint:** GET /BreadDownRequest/single/:requestId
+- **Description:** Get details of a specific breakdown request
+- **Headers:** Authorization: Bearer {token}
+- **Parameters:** requestId - ID of the breakdown request to retrieve
+- **Response (200 OK):**
+  ```json
+  {
+    "breakdownRequest": {
+      "request_id": 1,
+      "user_id": 1,
+      "vehicle_id": 5,
+      "request_type": "flat_tire",
+      "description": "Front left tire is flat due to nail puncture",
+      "location_latitude": "37.7749",
+      "location_longitude": "-122.4194",
+      "location_address": "123 Main St, San Francisco, CA 94105",
+      "timestamp": "2023-04-05T12:30:00.000Z",
+      "status": "pending",
+      "is_emergency": false,
+      "ai_diagnosis_result": "Tire puncture detected in front left tire",
+      "self_repair_attempted": true,
+      "created_at": "2023-04-05T12:30:00.000Z",
+      "updated_at": "2023-04-05T12:30:00.000Z",
+      "Vehicle": {
+        "vehicle_id": 5,
+        "make": "Toyota",
+        "model": "Corolla",
+        "year": 2020,
+        "license_plate": "ABC123",
+        "color": "Blue",
+        "vin_number": "1HGCM82633A123456"
+      },
+      "User": {
+        "user_id": 1,
+        "name": "John Doe",
+        "email": "john@example.com",
+        "phone_number": "1234567890"
+      },
+      "ServiceAssignment": {
+        "assignment_id": 3,
+        "request_id": 1,
+        "provider_id": 2,
+        "status": "assigned",
+        "estimated_arrival_time": "2023-04-05T13:00:00.000Z",
+        "actual_arrival_time": null,
+        "created_at": "2023-04-05T12:35:00.000Z",
+        "updated_at": "2023-04-05T12:35:00.000Z",
+        "ServiceProvider": {
+          "provider_id": 2,
+          "business_name": "Quick Roadside Assistance",
+          "provider_type": "towing",
+          "rating": 4.8,
+          "phone_number": "9876543210",
+          "email": "support@quickroadside.com"
+        }
+      }
+    }
+  }
+  ```
+- **Error Responses:**
+  - 404: Breakdown request not found
+  - 500: Server error while fetching breakdown request
+
+### 4. Update Breakdown Request
+- **Endpoint:** PUT /BreadDownRequest/update/:requestId
+- **Description:** Update an existing breakdown request
+- **Headers:** Authorization: Bearer {token}
+- **Parameters:** requestId - ID of the breakdown request to update
+- **Request Body:**
+  ```json
+  {
+    "request_type": "flat_tire",
+    "description": "Front right tire is flat due to nail puncture - updated location",
+    "location_latitude": "37.7750",
+    "location_longitude": "-122.4195",
+    "location_address": "125 Main St, San Francisco, CA 94105",
+    "is_emergency": true,
+    "ai_diagnosis_result": "Tire puncture detected, potential sidewall damage",
+    "self_repair_attempted": true
+  }
+  ```
+- **Response (200 OK):**
+  ```json
+  {
+    "message": "Breakdown request updated successfully",
+    "request": {
+      "request_id": 1,
+      "user_id": 1,
+      "vehicle_id": 5,
+      "request_type": "flat_tire",
+      "description": "Front right tire is flat due to nail puncture - updated location",
+      "location_latitude": "37.7750",
+      "location_longitude": "-122.4195",
+      "location_address": "125 Main St, San Francisco, CA 94105",
+      "timestamp": "2023-04-05T12:30:00.000Z",
+      "status": "pending",
+      "is_emergency": true,
+      "ai_diagnosis_result": "Tire puncture detected, potential sidewall damage",
+      "self_repair_attempted": true,
+      "created_at": "2023-04-05T12:30:00.000Z",
+      "updated_at": "2023-04-05T12:45:00.000Z"
+    }
+  }
+  ```
+- **Error Responses:**
+  - 404: Breakdown request not found
+  - 400: Cannot update request with status: completed or cancelled
+  - 500: Server error while updating breakdown request
+
+### 5. Cancel Breakdown Request
+- **Endpoint:** PUT /BreadDownRequest/cancel/:requestId
+- **Description:** Cancel an existing breakdown request
+- **Headers:** Authorization: Bearer {token}
+- **Parameters:** requestId - ID of the breakdown request to cancel
+- **Request Body:**
+  ```json
+  {
+    "cancellation_reason": "Found help from a friend nearby"
+  }
+  ```
+- **Response (200 OK):**
+  ```json
+  {
+    "message": "Breakdown request cancelled successfully",
+    "request": {
+      "request_id": 1,
+      "user_id": 1,
+      "vehicle_id": 5,
+      "request_type": "flat_tire",
+      "description": "Front right tire is flat due to nail puncture - updated location\n\nCancellation reason: Found help from a friend nearby",
+      "location_latitude": "37.7750",
+      "location_longitude": "-122.4195",
+      "location_address": "125 Main St, San Francisco, CA 94105",
+      "timestamp": "2023-04-05T12:30:00.000Z",
+      "status": "cancelled",
+      "is_emergency": true,
+      "ai_diagnosis_result": "Tire puncture detected, potential sidewall damage",
+      "self_repair_attempted": true,
+      "created_at": "2023-04-05T12:30:00.000Z",
+      "updated_at": "2023-04-05T13:00:00.000Z"
+    }
+  }
+  ```
+- **Error Responses:**
+  - 404: Breakdown request not found
+  - 400: Cannot cancel request with status: completed or cancelled
+  - 500: Server error while cancelling breakdown request
+
+### 6. Create Emergency Breakdown Request
+- **Endpoint:** POST /BreadDownRequest/emergency
+- **Description:** Create an emergency breakdown request with SOS alert
+- **Headers:** Authorization: Bearer {token}
+- **Request Body:**
+  ```json
+  {
+    "user_id": 1,
+    "vehicle_id": 5,
+    "location_latitude": "37.7749",
+    "location_longitude": "-122.4194",
+    "location_address": "123 Main St, San Francisco, CA 94105",
+    "alert_type": "accident",
+    "description": "Car crash, airbags deployed, need immediate assistance"
+  }
+  ```
+- **Response (201 Created):**
+  ```json
+  {
+    "message": "Emergency breakdown request created successfully",
+    "request": {
+      "request_id": 3,
+      "user_id": 1,
+      "vehicle_id": 5,
+      "request_type": "emergency",
+      "description": "Car crash, airbags deployed, need immediate assistance",
+      "location_latitude": "37.7749",
+      "location_longitude": "-122.4194",
+      "location_address": "123 Main St, San Francisco, CA 94105",
+      "timestamp": "2023-04-05T14:30:00.000Z",
+      "status": "pending",
+      "is_emergency": true,
+      "created_at": "2023-04-05T14:30:00.000Z",
+      "updated_at": "2023-04-05T14:30:00.000Z"
+    },
+    "sosAlert": {
+      "alert_id": 2,
+      "user_id": 1,
+      "vehicle_id": 5,
+      "location_latitude": "37.7749",
+      "location_longitude": "-122.4194",
+      "location_address": "123 Main St, San Francisco, CA 94105",
+      "timestamp": "2023-04-05T14:30:00.000Z",
+      "alert_type": "accident",
+      "status": "active",
+      "notified_contacts": "[]",
+      "notified_authorities": false,
+      "created_at": "2023-04-05T14:30:00.000Z",
+      "updated_at": "2023-04-05T14:30:00.000Z"
+    }
+  }
+  ```
+- **Error Responses:**
+  - 500: Server error while creating emergency request
+
+## Admin/Service Provider Routes (require authentication with appropriate role)
+
+### 7. Get All Breakdown Requests
+- **Endpoint:** GET /BreadDownRequest/all
+- **Description:** Get all breakdown requests (for admin/service providers)
+- **Headers:** Authorization: Bearer {token}
+- **Query Parameters:**
+  - status (optional): Filter requests by status (e.g., pending, assigned, completed, cancelled)
+  - limit (optional): Number of requests to return per page (default: 10)
+  - offset (optional): Pagination offset (default: 0)
+- **Response (200 OK):**
+  ```json
+  {
+    "total": 25,
+    "breakdownRequests": [
+      {
+        "request_id": 1,
+        "user_id": 1,
+        "vehicle_id": 5,
+        "request_type": "flat_tire",
+        "description": "Front right tire is flat due to nail puncture",
+        "location_latitude": "37.7750",
+        "location_longitude": "-122.4195",
+        "location_address": "125 Main St, San Francisco, CA 94105",
+        "timestamp": "2023-04-05T12:30:00.000Z",
+        "status": "pending",
+        "is_emergency": true,
+        "ai_diagnosis_result": "Tire puncture detected, potential sidewall damage",
+        "self_repair_attempted": true,
+        "created_at": "2023-04-05T12:30:00.000Z",
+        "updated_at": "2023-04-05T12:45:00.000Z",
+        "User": {
+          "name": "John Doe",
+          "email": "john@example.com",
+          "phone_number": "1234567890"
+        },
+        "Vehicle": {
+          "make": "Toyota",
+          "model": "Corolla",
+          "year": 2020,
+          "license_plate": "ABC123",
+          "color": "Blue"
+        },
+        "ServiceAssignment": null
+      },
+      {
+        "request_id": 2,
+        "user_id": 2,
+        "vehicle_id": 8,
+        "request_type": "battery_jump",
+        "description": "Car won't start, battery is dead",
+        "location_latitude": "37.7739",
+        "location_longitude": "-122.4312",
+        "location_address": "456 Market St, San Francisco, CA 94105",
+        "timestamp": "2023-03-15T08:45:00.000Z",
+        "status": "assigned",
+        "is_emergency": false,
+        "ai_diagnosis_result": "Battery voltage low",
+        "self_repair_attempted": false,
+        "created_at": "2023-03-15T08:45:00.000Z",
+        "updated_at": "2023-03-15T09:00:00.000Z",
+        "User": {
+          "name": "Jane Smith",
+          "email": "jane@example.com",
+          "phone_number": "9876543210"
+        },
+        "Vehicle": {
+          "make": "Honda",
+          "model": "Civic",
+          "year": 2019,
+          "license_plate": "XYZ789",
+          "color": "Silver"
+        },
+        "ServiceAssignment": {
+          "ServiceProvider": {
+            "business_name": "Mobile Mechanics"
+          }
+        }
+      }
+    ],
+    "currentPage": 1,
+    "totalPages": 3
+  }
+  ```
+- **Error Responses:**
+  - 500: Server error while fetching breakdown requests
+
+### 8. Get Nearby Breakdown Requests
+- **Endpoint:** GET /BreadDownRequest/nearby
+- **Description:** Get breakdown requests near a service provider's location
+- **Headers:** Authorization: Bearer {token}
+- **Query Parameters:**
+  - latitude: Current latitude of service provider
+  - longitude: Current longitude of service provider
+  - radius (optional): Search radius in kilometers (default: 50)
+  - providerId (optional): ID of the service provider
+- **Response (200 OK):**
+  ```json
+  {
+    "count": 2,
+    "nearbyRequests": [
+      {
+        "request_id": 1,
+        "user_id": 1,
+        "vehicle_id": 5,
+        "request_type": "flat_tire",
+        "description": "Front right tire is flat due to nail puncture",
+        "location_latitude": "37.7750",
+        "location_longitude": "-122.4195",
+        "location_address": "125 Main St, San Francisco, CA 94105",
+        "timestamp": "2023-04-05T12:30:00.000Z",
+        "status": "pending",
+        "is_emergency": true,
+        "ai_diagnosis_result": "Tire puncture detected, potential sidewall damage",
+        "self_repair_attempted": true,
+        "created_at": "2023-04-05T12:30:00.000Z",
+        "updated_at": "2023-04-05T12:45:00.000Z",
+        "distance": 1.2,
+        "User": {
+          "name": "John Doe",
+          "phone_number": "1234567890"
+        },
+        "Vehicle": {
+          "make": "Toyota",
+          "model": "Corolla",
+          "year": 2020,
+          "color": "Blue",
+          "license_plate": "ABC123"
+        }
+      },
+      {
+        "request_id": 4,
+        "user_id": 3,
+        "vehicle_id": 10,
+        "request_type": "lockout",
+        "description": "Locked keys in car",
+        "location_latitude": "37.7730",
+        "location_longitude": "-122.4190",
+        "location_address": "789 Pine St, San Francisco, CA 94105",
+        "timestamp": "2023-04-05T13:45:00.000Z",
+        "status": "pending",
+        "is_emergency": false,
+        "ai_diagnosis_result": null,
+        "self_repair_attempted": false,
+        "created_at": "2023-04-05T13:45:00.000Z",
+        "updated_at": "2023-04-05T13:45:00.000Z",
+        "distance": 2.5,
+        "User": {
+          "name": "Robert Johnson",
+          "phone_number": "5551234567"
+        },
+        "Vehicle": {
+          "make": "Ford",
+          "model": "Focus",
+          "year": 2021,
+          "color": "Red",
+          "license_plate": "DEF456"
+        }
+      }
+    ]
+  }
+  ```
+- **Error Responses:**
+  - 400: Latitude and longitude are required
+  - 500: Server error while fetching nearby requests
+
+## API Routes Reference
+
+### Base Endpoint
+All API routes are prefixed with `/BreadDownRequest` as defined in the main router:
+
+```javascript
+router.use('/BreadDownRequest', BreakDownRequestRouter);
+```
+
+### Route Summary
+- `POST /BreadDownRequest/create`: Create a new breakdown request
+- `GET /BreadDownRequest/user/:userId`: Get all breakdown requests for a user
+- `GET /BreadDownRequest/single/:requestId`: Get a specific breakdown request
+- `PUT /BreadDownRequest/update/:requestId`: Update a breakdown request
+- `PUT /BreadDownRequest/cancel/:requestId`: Cancel a breakdown request
+- `POST /BreadDownRequest/emergency`: Create emergency breakdown request with SOS alert
+- `GET /BreadDownRequest/all`: Get all breakdown requests (admin)
+- `GET /BreadDownRequest/nearby`: Get nearby breakdown requests (service providers) 
