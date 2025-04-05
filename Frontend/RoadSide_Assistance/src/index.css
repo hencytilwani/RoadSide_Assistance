@@ -1,0 +1,8 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Add this test class to verify Tailwind is working */
+.test-tailwind {
+  @apply text-blue-500 bg-gray-100 p-4 rounded-lg;
+}

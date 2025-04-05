@@ -1,0 +1,71 @@
+/* Admin Dashboard Specific CSS */
+
+/* Stat Card Colors */
+.bg-blue-500 {
+  background-color: #2563eb;
+}
+
+.bg-green-500 {
+  background-color: #10b981;
+}
+
+.bg-yellow-500 {
+  background-color: #f59e0b;
+}
+
+.bg-cyan-500 {
+  background-color: #06b6d4;
+}
+
+/* Specifically match the revenue card color from the image */
+.bg-cyan-500 {
+  background-color: #22c1d6;
+}
+
+.bg-green-600 {
+  background-color: #059669;
+}
+
+/* Chart Colors */
+.chart-line {
+  stroke: #4fd1c5;
+  fill: none;
+  stroke-width: 3;
+}
+
+/* Status Badge Colors */
+.status-pending {
+  background-color: #f59e0b;
+}
+
+.status-completed {
+  background-color: #10b981;
+}
+
+/* Button Colors */
+.btn-blue {
+  background-color: #3b82f6;
+}
+
+.btn-green {
+  background-color: #10b981;
+}
+
+/* Add Animation for Sidebar */
+@keyframes slideIn {
+  from { transform: translateX(-100%); }
+  to { transform: translateX(0); }
+}
+
+@keyframes slideOut {
+  from { transform: translateX(0); }
+  to { transform: translateX(-100%); }
+}
+
+.sidebar-open {
+  animation: slideIn 0.3s forwards;
+}
+
+.sidebar-closed {
+  animation: slideOut 0.3s forwards;
+} 
