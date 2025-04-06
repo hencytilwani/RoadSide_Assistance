@@ -1,0 +1,45 @@
+{
+	"appId": "com.example.roadassist",
+	"appName": "RoadAssist Pro",
+	"webDir": "dist",
+	"bundledWebRuntime": false,
+	"server": {
+		"androidScheme": "https",
+		"cleartext": true
+	},
+	"plugins": {
+		"SplashScreen": {
+			"launchAutoHide": false,
+			"showSpinner": true,
+			"spinnerColor": "#E53E3E",
+			"backgroundColor": "#FFFFFF",
+			"androidSplashResourceName": "splash"
+		},
+		"StatusBar": {
+			"style": "dark",
+			"backgroundColor": "#FFFFFF"
+		},
+		"Geolocation": {
+			"permissions": [
+				"location"
+			]
+		},
+		"Camera": {
+			"permissions": [
+				"camera"
+			]
+		},
+		"Preferences": {}
+	},
+	"android": {
+		"allowMixedContent": true,
+		"captureInput": true,
+		"webContentsDebuggingEnabled": true,
+		"backgroundColor": "#ffffff"
+	},
+	"ios": {
+		"contentInset": "always",
+		"backgroundColor": "#ffffff",
+		"contentInsetAdjustmentBehavior": "automatic"
+	}
+}
